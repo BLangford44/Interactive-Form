@@ -307,7 +307,6 @@ const zipCode = document.getElementById('zip');
 const cvvNumber = document.getElementById('cvv');
 
 form.addEventListener('submit', (event) => {
-    event.preventDefault(); // Prevent form from submitting w/ invalid entries
 
     // Validate User Inputs
     const isNameValid = validateName(nameField.value); // Validate Name 
