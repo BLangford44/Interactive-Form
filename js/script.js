@@ -1,18 +1,14 @@
 
-
 /*
-
 JOB FIELD SECTION
-
 */
 
-const nameField = document.getElementById('name'); // Name Field
-nameField.focus(); //Focus on form loading
-
-const otherJobRoleField = document.getElementById('other-job-role'); // Other Job Role Field
-otherJobRoleField.style.display = 'none'; // Hide 'Other Job Role' field unless "Other" selected in "Job Role" field
+const nameField = document.getElementById('name'); // Name Input Field
+nameField.focus(); // Focus on form loading
 
 const jobRoleSelector = document.getElementById('title'); //Job Role Selector
+const otherJobRoleField = document.getElementById('other-job-role'); // Other Job Role Field
+otherJobRoleField.style.display = 'none'; // Hide 'Other Job Role' field unless "Other" selected in "Job Role" field
 
 /*
 Change Event:
@@ -21,9 +17,7 @@ Change Event:
 */
 
 jobRoleSelector.addEventListener('change', (event) => {
-
-    const fieldChanged = event.target;
-    const selectedValue = fieldChanged.value;
+    const selectedValue = event.target.value;
 
     if (selectedValue === 'other') {
         otherJobRoleField.style.display = '';
@@ -33,36 +27,28 @@ jobRoleSelector.addEventListener('change', (event) => {
 }); // End Event Listener
 
 /*
-
 'T-SHIRT INFO' SECTION
-
 */
 
-// Color Menu Element
-const colorMenu = document.getElementById('color');
-colorMenu.disabled = true;
-
-const colorOptions = colorMenu.children
-// Design Menu Element
-const designMenu = document.getElementById('design');
+const designMenu = document.getElementById('design'); // Design Menu Selector
+const colorMenu = document.getElementById('color'); // Color Menu Selector
+colorMenu.disabled = true; //Color menu disabled unless a design is chosen
+const colorOptions = colorMenu.children //Color Menu Options
 
 /*
 Change Event:
-- Will display Other Job Field if 'other' is selected from Job Role selector
-- Will remove from display if Job Role changed to something other than 'other'
+- Will enable color menu
+- Will loop over color options and only allow user to select a color that is available for the design chosen
 */
 
 designMenu.addEventListener('change', (event) => {
-    const fieldChanged = event.target;
+
+    const designFieldVal = event.target.value;
 
     // Enabled Color Select Menu
     colorMenu.disabled = false;
-
-    // Loop over children of Color Select
     for (let i = 0; i < colorOptions.length; i++) {
-
         let colorChild = colorOptions[i];
-        let designFieldVal = fieldChanged.value;
         let dataTheme = colorChild.getAttribute('data-theme');
 
         if (designFieldVal === dataTheme) {
@@ -73,21 +59,17 @@ designMenu.addEventListener('change', (event) => {
             colorChild.hidden = true;
             colorChild.selected = false;
         }; // End IF statment
-    } // End For Loop
+    }; //End For Loop
 }); // End Event Listener
 
+
 /*
-
 'REGISTER FOR ACTIVITIES' SECTION
-
 */
 
-// Register for Activities Field Set
-const register = document.getElementById('activities');
-
-// Total paragraph element
-const totalPElement = document.getElementById('activities-cost');
-let totalCost = 0;
+const register = document.getElementById('activities'); // Register for Activities Field Set
+const totalPElement = document.getElementById('activities-cost'); // Total cose paragraph element
+let totalCost = 0; // Variable to store the running total for activities selected
 
 /*
 Change Event:
@@ -106,64 +88,61 @@ register.addEventListener('change', (event) => {
         totalCost -= cost; // Subtract unchecked activity from total
     }; //End if statement
 
-    totalPElement.innerHTML = `$${totalCost}`; // Change HTML of the activities-cost element to reflect new price
+    totalPElement.innerHTML = `$${totalCost}`; // Change HTML of the 'totalPElement' element to reflect new price
 }); // End Event Listener
+
 
 /*
 Activity Box Accessibility Features
+- Add focus class to any box that is selected and remove focus class when box blurs
 */
 
-const activityBoxes = document.querySelectorAll("input[type='checkbox']")
+const activityBoxes = document.querySelectorAll("input[type='checkbox']") //Store all Activities options
 
-
+// Loop through all activites to check for focus/blur status
 activityBoxes.forEach((checkbox) => {
-
     let checkParent = checkbox.parentElement;
-
-    /*
-    Focus/Blur Event:
-    - Will Add/Remove the 'focus' class form the checkboxes depending on focus/blur
-    */
 
     // Add focus class to parent element
     checkbox.addEventListener('focus', () => checkParent.classList.add('focus'));
     // Remove focus class from parent element)
     checkbox.addEventListener('blur', () => checkParent.classList.remove('focus'));
 
-});// Add focus class to parent element
+});// End forEach 
 
 
 /*
     Click Event:
     - Disable checkbox if other activity w/ same Date and Time checked
-    */
+    - Enable all options once conflicting option de-selected
+*/
 
 register.addEventListener('click', (event) => {
     const elementClicked = event.target;
     const type = elementClicked.type
-    let matchArr = [];
+    let matchArr = []; // Empty array to store activities that match date/time
 
-    if (type === 'checkbox') {
-        const dateAndTime = elementClicked.getAttribute('data-day-and-time');
+    if (type === 'checkbox') { //Filter for only checkbox items
 
-        // Create Array of Matching Checkboxes
+        const dateAndTime = elementClicked.getAttribute('data-day-and-time'); //Get date and time
+
+        // Create Array of Checkboxes with matching date and time
         activityBoxes.forEach((box) => {
             if (box.getAttribute('data-day-and-time') === dateAndTime) {
                 matchArr.push(box)
             };
-        });
+        }); // End forEach
 
-        const isItemChecked = matchArr.reduce((isChecked, box) => {
+        const isItemChecked = matchArr.reduce((isChecked, box) => { //Test to see if box is already checked
             if (box.checked) {
                 return true
             } else {
                 return isChecked
             }
+        }, false); // End Reduce
 
-        }, false);
-
+        // Re-activate Boxes if option unchecked
         if (isItemChecked) {
-
             matchArr.forEach((box) => {
                 if (box.checked !== true) {
                     box.disabled = true;
@@ -174,7 +153,7 @@ register.addEventListener('click', (event) => {
                 box.removeAttribute('disabled')
             });
         }
-    };
+    }; // End if Statement
 });
 
 
@@ -184,12 +163,11 @@ PAYMENT INFO SECTION
 
 */
 
-// Pay With Select Element
-const payWith = document.getElementById('payment');
+const payWith = document.getElementById('payment'); // Pay With Select Element
 
 // Payment Option Divs
 const creditCard = document.getElementById('credit-card'); // Credit Card
-payWith.children[1].selected = true; // Credit Card Options selected by default
+payWith.children[1].selected = true; // Select credit card option by default
 
 const paypal = document.getElementById('paypal'); // Paypal 
 paypal.hidden = true; // Hide Paypal
@@ -199,7 +177,7 @@ bitcoin.hidden = true; // Hide Bitcoin
 
 /*
 Change Event:
-- 
+- Will show/hide payment info based on the payment method selected
 */
 
 payWith.addEventListener('change', (event) => {
@@ -208,46 +186,38 @@ payWith.addEventListener('change', (event) => {
     let selectedOptionIndex = changedElement.options.selectedIndex;
     let selectedOption = changedElement.children[selectedOptionIndex].value;
 
-    if (selectedOption === creditCard.id) {
-
-        creditCard.hidden = false;
-        paypal.hidden = true;
-        bitcoin.hidden = true;
-
-    } else if (selectedOption === paypal.id) {
-        creditCard.hidden = true;
-        paypal.hidden = false;
-        bitcoin.hidden = true;
-    } else {
-        creditCard.hidden = true;
-        paypal.hidden = true;
-        bitcoin.hidden = false;
-    };
+    creditCard.hidden = selectedOption !== creditCard.id; //Hide credit card if not selected
+    paypal.hidden = selectedOption !== paypal.id; // Hide paypal if not selected
+    bitcoin.hidden = selectedOption !== bitcoin.id; // Hide BTC if not selected
 });
 
-
-
 /*
-
-FORM VALIDATION
-
+FORM VALIDATION Functions
 */
 
-/**
-*
-* VALIDATORS
-*  
-*/
-
-// Validate Name - Can only contain letters a-z
+// Name field not blank
 function validateName(nameValue) {
-    return nameValue !== '';
+
+    let validationObject = {};
+
+    if (nameValue === '') {
+        nameField.nextElementSibling.textContent = "Name field cannot be blank"; // Change error message
+        return false
+        
+    } else if (/[0-9]+/.test(nameValue)) {
+
+        nameField.nextElementSibling.textContent = "Name field cannot contain numbers"; // Change error message
+        return false
+    }
+
+    return true
 }
 
 // Validate Email Address
-function isValidEmail(email) {
+function validateEmail(email) {
     return /^[^@]*@[^@.]*\.[a-z]+$/i.test(email);
 }
+
 // Check for Activities - At least one activity checked
 function isItemChecked(activities) {
     for (let i = 0; i < activities.length; i++) { // Loop through all activities
@@ -260,22 +230,26 @@ function isItemChecked(activities) {
 }
 
 // Validate CC only accepts number (13-16 digit numbers) | Only if credit card selected
-
 function validateCC(ccNumber) {
     return /^[0-9]{13,16}$/.test(ccNumber);
 }
 
-// Validate CC only accepts number (13-16 digit numbers) | Only if credit card selected
-
-function validateZip(zipNumber) {
-    return /^[0-9]{5}$/.test(zipNumber)
+// Validate Zip Code (5 digit numbers) | Only if credit card selected
+function validateZip(zipCode) {
+    return /^[0-9]{5}$/.test(zipCode)
 }
-
-// Validate cvv value (3 digits only)
+// Validate CVV Number (3 digit number) | Only if credit card selecteda
 function validateCVV(cvvNumber) {
-    return /^[0-9]{3}$/.test(cvvNumber);
+    return /^[0-9]{3}$/.test(cvvNumber)
 }
 
+
+/* Format Form inputs based on whether text/numbers entered are valid
+
+isValid = bool
+elementToFormat = HTML Element
+
+*/
 function formatValidationHTML(isValid, elementToFormat) {
 
     if (isValid) {
@@ -293,6 +267,34 @@ function formatValidationHTML(isValid, elementToFormat) {
 }
 
 /*
+Real Time Validation Functions
+*/
+
+/*
+Function:
+- Show/Hide error message based on validation result
+*/
+
+function showOrHideTip(show, element) {
+    // show element when show is true, hide when false
+    if (show) {
+        element.style.display = "inherit";
+    } else {
+        element.style.display = "none";
+    }
+}
+
+function createRealTimeListener(validator) {
+    return e => {
+        const text = e.target.value;
+        const valid = validator(text);
+        const showTip = text !== "" && !valid;
+        const tooltip = e.target.nextElementSibling;
+        showOrHideTip(showTip, tooltip);
+    };
+}
+
+/*
 
 Form Submit Event:
 
@@ -305,17 +307,17 @@ const zipCode = document.getElementById('zip');
 const cvvNumber = document.getElementById('cvv');
 
 form.addEventListener('submit', (event) => {
-    event.preventDefault(); // Prevent form from submitting w/ invalid name
+    event.preventDefault(); // Prevent form from submitting w/ invalid entries
 
     // Validate User Inputs
     const isNameValid = validateName(nameField.value); // Validate Name 
-    const isEmailValid = isValidEmail(emailAddress.value); // Validate Email Address
+    const isEmailValid = validateEmail(emailAddress.value); // Validate Email Address
     const isActivitySelected = isItemChecked(activitiesBox.children); // Validate one activity selected
-    const isValidCc = validateCC(ccNumber.value); // Validate CC Number
+    const isValidCc = validateCC(ccNumber.value) // Validate CC Number
     const isValidZip = validateZip(zipCode.value); // Validate zip
     const isValidCvv = validateCVV(cvvNumber.value); // Validate cvv value
 
-    // Add 'valid'/'not-valid' class based on whether inputs are validated true/false
+    // Add 'valid'/'not-valid' classes based on whether inputs are validated true/false
     formatValidationHTML(isNameValid, nameField);
     formatValidationHTML(isEmailValid, emailAddress);
     formatValidationHTML(isActivitySelected, activitiesBox);
@@ -326,7 +328,6 @@ form.addEventListener('submit', (event) => {
     //Credit card selected
     const ccNotSelected = document.getElementById('payment').value !== 'credit-card'
 
-    // Prevent Form from Resetting
     if (isNameValid &&
         isEmailValid &&
         isActivitySelected &&
@@ -344,37 +345,12 @@ form.addEventListener('submit', (event) => {
         // Place code for accepting credit cards here
 
     } else {
-        event.preventDefault(); // Prevent form from submitting w/ invalid name
+        event.preventDefault(); // Prevent form from submitting w/ invalid entries
     };// End If Statement
 });
 
-// /*
-// Real Time Validation
-
-// */
-
-function showOrHideTip(show, element) {
-    // show element when show is true, hide when false
-    if (show) {
-        element.style.display = "inherit";
-    } else {
-        element.style.display = "none";
-    }
-}
-
-
-function createListener(validator) {
-    return e => {
-        const text = e.target.value;
-        const valid = validator(text);
-        const showTip = text !== "" && !valid;
-        const tooltip = e.target.nextElementSibling;
-        showOrHideTip(showTip, tooltip);
-    };
-}
-
-// Real time form validation
-emailAddress.addEventListener("input", createListener(isValidEmail));
-ccNumber.addEventListener("input", createListener(validateCC));
-zipCode.addEventListener("input", createListener(validateZip));
-cvvNumber.addEventListener("input", createListener(validateCVV));
+// Real time form validation event listeners
+emailAddress.addEventListener("input", createRealTimeListener(validateEmail));
+ccNumber.addEventListener("input", createRealTimeListener(validateCC));
+zipCode.addEventListener("input", createRealTimeListener(validateZip));
+cvvNumber.addEventListener("input", createRealTimeListener(validateCVV));
